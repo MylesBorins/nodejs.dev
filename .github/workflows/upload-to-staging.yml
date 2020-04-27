@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@0.9.0
+        id: comment
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -19,13 +20,16 @@ jobs:
             core.setOutput('isValidPreview', isValidPreview);
 
       - uses: actions/checkout@v2
+        if: steps.comment.isValidPreview
 
       - name: Checkout Git Branch
+        if: steps.comment.isValidPreview
         run: |
           git fetch origin +refs/pull/${{ github.event.issue.number }}/merge
           git checkout FETCH_HEAD
 
       - name: Setup GCloud
+        if: steps.comment.isValidPreview
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
@@ -34,6 +38,7 @@ jobs:
           export_default_credentials: true
 
       - uses: actions/cache@v1
+        if: steps.comment.isValidPreview
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -41,18 +46,21 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true' && steps.comment.isValidPreview
         run: npm ci
 
       - name: Run Gatsby Build
+        if: steps.comment.isValidPreview
         run: npm run build-ci
         env:
           PATH_PREFIX: ${{ github.event.issue.number }}/
 
       - name: Upload to GCS
+        if: steps.comment.isValidPreview
         run: gsutil -m rsync -R ./public/ gs://staging.nodejs.dev/${{ github.event.issue.number }}/
 
       - name: Comment on PR
+        if: steps.comment.isValidPreview
         uses: actions/github-script@0.9.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
