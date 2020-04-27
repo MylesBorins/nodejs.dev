@@ -5,8 +5,6 @@ authors: flaviocopes, onel0p3z, ollelauribostrom, MylesBorins, fhemberger, LaRua
 section: Quick Start
 ---
 
-Believe it or not, Node.js is only ten years old.
-
 In comparison, JavaScript is [24 years old](https://en.wikipedia.org/wiki/JavaScript#Beginnings_at_Netscape) and the Web is [30 years old](https://howoldistheinter.net/).
 
 Ten years isn't a very long time in tech, but Node.js seems to have been around forever.
