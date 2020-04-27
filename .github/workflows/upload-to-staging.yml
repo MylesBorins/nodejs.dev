@@ -17,8 +17,9 @@ jobs:
               context.payload.issue.pull_request &&
               context.payload.comment.body === '/preview'
             );
-            core.debug(isValidPreview ? 'Yay!' : false)
-            core.setOutput('isValidPreview', isValidPreview ? 'Yay!' : false);
+            const textify = isValidPreview ? 'Yay!' : false;
+            core.debug(textify)
+            core.setOutput('isValidPreview', textify);
 
       - uses: actions/checkout@v2
         if: steps.comment.isValidPreview
